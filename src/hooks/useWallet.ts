@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { BrowserProvider, formatEther } from 'ethers';
+import { switchToPolygonTestnet, POLYGON_TESTNET } from '@/lib/web3Config';
 
 interface WalletState {
   address: string | null;
@@ -8,6 +9,8 @@ interface WalletState {
   isConnecting: boolean;
   isConnected: boolean;
   error: string | null;
+  isCorrectNetwork: boolean;
+  provider: BrowserProvider | null;
 }
 
 export function useWallet() {
@@ -18,6 +21,8 @@ export function useWallet() {
     isConnecting: false,
     isConnected: false,
     error: null,
+    isCorrectNetwork: false,
+    provider: null,
   });
 
   const connect = useCallback(async () => {
@@ -34,15 +39,29 @@ export function useWallet() {
       const address = accounts[0];
       const balance = await provider.getBalance(address);
       const network = await provider.getNetwork();
+      const chainId = Number(network.chainId);
+      const isCorrectNetwork = chainId === POLYGON_TESTNET.chainId;
 
       setState({
         address,
         balance: formatEther(balance),
-        chainId: Number(network.chainId),
+        chainId,
         isConnecting: false,
         isConnected: true,
         error: null,
+        isCorrectNetwork,
+        provider,
       });
+
+      // Suggest switching to Polygon if not on correct network
+      if (!isCorrectNetwork) {
+        try {
+          await switchToPolygonTestnet(provider);
+          setState(prev => ({ ...prev, isCorrectNetwork: true, chainId: POLYGON_TESTNET.chainId }));
+        } catch (switchError) {
+          console.warn('User rejected network switch');
+        }
+      }
     } catch (error: any) {
       setState(prev => ({
         ...prev,
@@ -60,8 +79,27 @@ export function useWallet() {
       isConnecting: false,
       isConnected: false,
       error: null,
+      isCorrectNetwork: false,
+      provider: null,
     });
   }, []);
+
+  const switchNetwork = useCallback(async () => {
+    if (!state.provider) {
+      setState(prev => ({ ...prev, error: 'Provider not initialized' }));
+      return;
+    }
+
+    try {
+      await switchToPolygonTestnet(state.provider);
+      setState(prev => ({ ...prev, isCorrectNetwork: true, chainId: POLYGON_TESTNET.chainId }));
+    } catch (error: any) {
+      setState(prev => ({
+        ...prev,
+        error: error.message || 'Failed to switch network',
+      }));
+    }
+  }, [state.provider]);
 
   const formatAddress = useCallback((address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -87,6 +125,7 @@ export function useWallet() {
     ...state,
     connect,
     disconnect,
+    switchNetwork,
     formatAddress,
   };
 }
