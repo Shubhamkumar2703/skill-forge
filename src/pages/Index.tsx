@@ -98,7 +98,7 @@ export default function Index() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
               >
-                CodeFire combines on-chain credentials with real GitHub activity to create 
+                SkillForge combines on-chain credentials with real GitHub activity to create 
                 trustless, verifiable proof of developer skills.
               </motion.p>
 
@@ -252,7 +252,7 @@ export default function Index() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <FireLogo size="sm" />
             <p className="text-sm text-muted-foreground">
-              © 2024 CodeFire. Built on Polygon.
+              © 2026 SkillForge. Built on Polygon.
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
