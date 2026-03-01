@@ -252,7 +252,7 @@ export default function Index() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <FireLogo size="sm" />
             <p className="text-sm text-muted-foreground">
-              © 2026 SkillForge. Built on Polygon.
+              © 2024 CodeFire. Built on Polygon.
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
