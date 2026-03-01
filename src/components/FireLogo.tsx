@@ -29,7 +29,7 @@ export function FireLogo({ size = 'md', showText = true }: FireLogoProps) {
       </motion.div>
       {showText && (
         <span className={`${sizes[size].text} font-bold fire-gradient-text`}>
-          CodeFire
+          SkillForge
         </span>
       )}
     </motion.div>
